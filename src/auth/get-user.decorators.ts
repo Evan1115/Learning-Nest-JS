@@ -3,10 +3,13 @@ import { User } from './user.entity';
 
 export const GetUser = createParamDecorator(
   (_data, ctx: ExecutionContext): User => {
-    const req = ctx.switchToHttp().getRequest();
+    const req = ctx.switchToHttp().getRequest(); //get the request
     return req.user;
   },
 );
+
+//custom getuser decorator
+//is to access the request body to get user info
 
 //the ExecutionContext is a class that provides contextual information about the current request and response. 
 //It is used to access the current request and response objects, as well as the current user's authentication 

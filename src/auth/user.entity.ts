@@ -12,6 +12,6 @@ export class User {
   @Column()
   password: string;
 
-  @OneToMany((_type) => Task, (task) => task.user, { eager: true })
+  @OneToMany((_type) => Task, (task) => task.user, { eager: true }) //one user can have many tasks , eager = true means when query user info , we will also get task info
   tasks: Task[];
 }

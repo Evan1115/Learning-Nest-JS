@@ -17,7 +17,7 @@ export class Task {
   @Column()
   status: TaskStatus;
 
-  @ManyToOne((_type) => User, (user)=> user.tasks , {eager: false})
-  @Exclude({toPlainOnly: true}) //when return json response, it will ignore user property
+  @ManyToOne((_type) => User, (user)=> user.tasks , {eager: false}) // many tasks can belongs to one user, eager = false means when query task we will not get user info
+  @Exclude({toPlainOnly: true}) //exclude this property in json reponse when we convert(serialize) object to plain object text using toPlainOnly() method but have to use with interceptop transformer so that nest js know to exlcude it  when serializing
   user: User;
 }

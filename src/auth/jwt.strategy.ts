@@ -6,7 +6,7 @@ import { User } from './user.entity';
 import { UserRepository } from './users.repository';
 
 @Injectable()
-export class JWTStrategy extends PassportStrategy(Strategy) {
+export class JWTStrategy extends PassportStrategy(Strategy) { //JWT strategy to validate the jwt token passed in using passport
   constructor(private userRepository: UserRepository) {
     super({
       secretOrKey: 'topSecret51', //to verify the token's signature

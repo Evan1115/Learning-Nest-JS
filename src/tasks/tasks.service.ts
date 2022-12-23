@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { TaskStatus } from './task-status.enum';
 // import { v4 as uuid } from 'uuid';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -21,17 +25,24 @@ export class TasksService {
   //   return found
   // }
 
-  async getTasks(filterDto: GetTaskFilterDto): Promise<Task[]> {
-    return this.tasksRepository.getTasks(filterDto);
+  async getTasks(filterDto: GetTaskFilterDto, user: User): Promise<Task[]> {
+    return this.tasksRepository.getTasks(filterDto, user);
   }
 
-  async getTaskById(id: string): Promise<Task> {
+  async getTaskById(id: string, user: User): Promise<Task> {
     const found = await this.tasksRepository.findOne({
       where: {
-        id: id,
+        id,
+        user, //since we have user property defined in task enitity, we can find with that property
       },
     });
 
+    //alternative way to check if task is belong to user!!
+    // if (!user.tasks.find((item) => item.id === id)) {
+    //   throw new UnauthorizedException(
+    //     `You are not authorized for Task with id ${id}`,
+    //   );
+    // }
     if (!found) throw new NotFoundException(`Task with id "${id}" not found`);
     return found;
   }
@@ -40,15 +51,19 @@ export class TasksService {
     return this.tasksRepository.createTask(createTaskDto, user);
   }
 
-  async deleteTask(id: string): Promise<void> {
-    const deletedResult = await this.tasksRepository.delete(id);
+  async deleteTask(id: string, user: User): Promise<void> {
+    const deletedResult = await this.tasksRepository.delete({ id, user });
 
     if (deletedResult.affected === 0)
       throw new NotFoundException(`Task with id "${id}" not found`);
   }
 
-  async updateTaskStatus(id: string, status: TaskStatus): Promise<Task> {
-    const task = await this.getTaskById(id);
+  async updateTaskStatus(
+    id: string,
+    status: TaskStatus,
+    user: User,
+  ): Promise<Task> {
+    const task = await this.getTaskById(id, user);
 
     task.status = status;
 
